@@ -2,38 +2,35 @@ name: Deploy to Netlify
 
 on:
   push:
+    branches: [main]
   pull_request:
-  workflow_dispatch:
-  
+    branches: [main]
+  workflow_dispatch:   # allows manual trigger from GitHub UI
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
+      # No need for Node.js / npm install / npm run build
+      # because you only have static index.html
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build project
-        run: npm run build
-
-      - name: Add Netlify redirects
+      - name: Create Netlify _redirects file (for SPA routing)
         run: |
-          echo "/*    /index.html   200" > build/_redirects
+          mkdir -p public
+          echo "/**    /index.html   200" > public/_redirects
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3
         with:
-          publish-dir: ./build
-          production-branch: main
+          publish-dir: '.'             # deploy from root (where index.html lives)
+          production-branch: main      # only main → production deploy
+          production-deploy: true      # important: makes it a production deploy on main
+          github-token: ${{ secrets.GITHUB_TOKEN }}   # needed for PR comments
+          deploy-message: "Deploy from GitHub Actions"
         env:
           NETLIFY_AUTH_TOKEN: nfp_hxNYEuuMZNHz4UEmGiGSvi6vWf8iaS8Nc1c7
           NETLIFY_SITE_ID: acfe9e56-1c64-4664-b424-4576d6da7610
