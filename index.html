@@ -3,647 +3,555 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sophyra HR Agent - SDLC & Architecture Blueprint</title>
+    <title>Sophyra HR Agent - Complete Architecture Suite</title>
     <style>
         :root {
             --primary: #2563eb;
             --primary-dark: #1e40af;
             --secondary: #64748b;
             --accent: #0f172a;
-            --bg-light: #f8fafc;
+            --bg-light: #f1f5f9;
             --surface: #ffffff;
-            --border: #e2e8f0;
+            --border: #cbd5e1;
             --success: #10b981;
-            --danger: #ef4444;
             --warning: #f59e0b;
-            --text-main: #334155;
-            --text-light: #64748b;
+            --danger: #ef4444;
+            --purple: #8b5cf6;
             --radius: 8px;
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-light);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: #eef2f6;
             color: var(--text-main);
-            line-height: 1.6;
+            margin: 0;
+            padding-bottom: 100px;
         }
 
-        /* --- Layout & Navigation --- */
+        /* --- Header & Nav --- */
         header {
             background: var(--surface);
             border-bottom: 1px solid var(--border);
             padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
         }
 
         .brand {
-            font-size: 1.25rem;
-            font-weight: 700;
+            font-weight: 800;
+            font-size: 1.2rem;
             color: var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
-        .brand span { color: var(--primary); }
-
-        nav { display: flex; gap: 1rem; }
-
-        .nav-btn {
-            background: none;
-            border: none;
+        nav button {
+            background: transparent;
+            border: 1px solid var(--border);
             padding: 0.5rem 1rem;
+            border-radius: 20px;
             cursor: pointer;
             font-weight: 600;
-            color: var(--text-light);
-            border-radius: var(--radius);
+            color: var(--secondary);
             transition: all 0.2s;
+            margin-left: 0.5rem;
         }
 
-        .nav-btn.active {
-            background-color: var(--primary);
+        nav button.active, nav button:hover {
+            background: var(--primary);
             color: white;
+            border-color: var(--primary);
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
+        /* --- Layout Containers --- */
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
         }
 
-        /* --- Tab System --- */
-        .view-section { display: none; animation: fadeIn 0.3s ease; }
-        .view-section.active { display: block; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* --- SDLC Document Styles --- */
-        .doc-grid {
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            gap: 2rem;
-        }
-
-        .sidebar {
-            position: sticky;
-            top: 100px;
-            height: fit-content;
-        }
-
-        .sidebar ul { list-style: none; border-left: 2px solid var(--border); }
-        .sidebar li { margin-bottom: 0.5rem; }
-        .sidebar a {
-            display: block;
-            padding-left: 1rem;
-            color: var(--text-light);
-            text-decoration: none;
-            border-left: 2px solid transparent;
-            margin-left: -2px;
-            transition: 0.2s;
-        }
-        .sidebar a:hover, .sidebar a.active {
-            color: var(--primary);
-            border-left-color: var(--primary);
-            font-weight: 600;
-        }
-
-        .content-card {
+        .diagram-section {
             background: var(--surface);
-            padding: 2rem;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            margin-bottom: 2rem;
+            overflow: hidden;
             border: 1px solid var(--border);
         }
 
-        h1, h2, h3 { color: var(--accent); margin-bottom: 1rem; }
-        h2 { border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-            font-size: 0.9rem;
+        .section-header {
+            padding: 1.5rem;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        
-        th, td {
-            text-align: left;
-            padding: 0.75rem;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        th { background: var(--bg-light); color: var(--text-main); }
 
-        code {
-            background: #f1f5f9;
-            padding: 0.2rem 0.4rem;
+        .section-header h2 { margin: 0; font-size: 1.25rem; }
+        
+        .toggle-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 0.4rem 1rem;
             border-radius: 4px;
-            font-family: monospace;
-            color: #d63384;
+            cursor: pointer;
+            font-size: 0.85rem;
         }
 
-        pre {
-            background: #1e293b;
-            color: #e2e8f0;
+        .toggle-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .section-body {
+            padding: 2rem;
+            display: none; /* Hidden by default, toggled via JS */
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .section-body.open { display: block; }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- 1. FLOWCHART STYLES (Swimlanes) --- */
+        .swimlane-grid {
+            display: grid;
+            grid-template-columns: 150px 1fr 1fr;
+            border: 1px solid var(--border);
+            background: white;
+        }
+
+        .sl-header {
+            background: #f8fafc;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            color: var(--secondary);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .sl-col {
+            border-right: 1px solid var(--border);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: relative;
+        }
+        
+        /* Dashed lines down columns */
+        .sl-col::before {
+            content: '';
+            position: absolute;
+            top: 0; bottom: 0; left: 0;
+            width: 1px;
+            background: repeating-linear-gradient(to bottom, var(--border) 0, var(--border) 5px, transparent 5px, transparent 10px);
+        }
+
+        .node {
+            background: white;
+            border: 2px solid var(--primary);
             padding: 1rem;
             border-radius: var(--radius);
-            overflow-x: auto;
-            margin: 1rem 0;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 0.9rem;
+            z-index: 2;
+        }
+        
+        .node strong { display: block; color: var(--accent); margin-bottom: 4px; }
+        .node.decision { border-color: var(--warning); border-radius: 20px; background: #fffbeb; }
+        .node.ai { border-color: var(--purple); background: #f5f3ff; }
+        .node.end { border-color: var(--success); }
+
+        /* Arrows (Simple CSS implementation) */
+        .arrow-down {
+            text-align: center;
+            color: var(--secondary);
+            font-size: 1.2rem;
+            line-height: 0.5;
         }
 
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
+        /* --- 2. ER DIAGRAM STYLES (CSS Grid Map) --- */
+        .er-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            position: relative;
+        }
+
+        .er-table {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            border-top: 4px solid var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .er-table.header { background: var(--primary); color: white; }
+        .er-table h3 { margin: 0; padding: 0.5rem; font-size: 0.9rem; }
+        
+        .er-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0.5rem;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.8rem;
+        }
+        
+        .er-row:last-child { border-bottom: none; }
+        .pk { color: var(--danger); font-weight: bold; }
+        .fk { color: var(--secondary); font-style: italic; }
+
+        /* Connecting Lines for ER (Visual approximation) */
+        .er-connector {
+            position: absolute;
+            height: 2px;
+            background: var(--border);
+            z-index: 0;
+        }
+
+        /* --- 3. SDLC TIMELINE STYLES --- */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background-color: var(--border);
+            top: 0;
+            bottom: 0;
+            left: 20px;
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            right: auto;
+            left: 12px;
+            background-color: white;
+            border: 4px solid var(--primary);
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .timeline-content {
+            padding: 20px;
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .phase-badge {
+            background: var(--primary);
+            color: white;
+            padding: 2px 8px;
             border-radius: 4px;
             font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
         }
-        .badge-req { background: #e0f2fe; color: #0284c7; }
-        .badge-tech { background: #f0fdf4; color: #16a34a; }
 
-        /* --- FLOWCHART STYLES (CSS Grid Architecture) --- */
-        .flow-container {
-            display: flex;
-            flex-direction: column;
-            gap: 3rem;
-            padding-bottom: 4rem;
-        }
+        .task-list { margin-top: 10px; padding-left: 20px; font-size: 0.9rem; color: var(--secondary); }
 
-        .swimlane {
-            display: grid;
-            grid-template-columns: 200px 1fr;
-            gap: 1rem;
-            position: relative;
-        }
-
-        .swimlane-label {
-            text-align: right;
-            padding-right: 1rem;
-            font-weight: 700;
-            color: var(--text-light);
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 1px;
-            border-right: 2px dashed var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-        }
-
-        .flow-nodes {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            padding-left: 1rem;
-            position: relative;
-        }
-
-        /* Connecting Line Vertical */
-        .flow-nodes::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 20px;
-            bottom: 20px;
-            width: 2px;
-            background: var(--border);
-        }
-
-        .node-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            position: relative;
-        }
-
-        /* Node Box */
-        .node {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 1rem;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            width: 100%;
-            max-width: 600px;
-            position: relative;
-            transition: transform 0.2s;
-            z-index: 2;
-        }
-        
-        .node:hover { transform: translateY(-2px); border-color: var(--primary); }
-
-        .node h4 { margin-bottom: 0.25rem; font-size: 1rem; display: flex; justify-content: space-between; }
-        .node p { font-size: 0.85rem; color: var(--text-light); }
-
-        /* Connectors (Arrows) */
-        .node-wrapper::after {
-            content: '';
-            position: absolute;
-            left: -21px; /* Adjust based on padding/gap */
-            top: 50%;
-            width: 20px;
-            height: 2px;
-            background: var(--border);
-        }
-        
-        /* Specific Node Types */
-        .node.start { border-left: 4px solid var(--success); }
-        .node.process { border-left: 4px solid var(--primary); }
-        .node.ai { border-left: 4px solid var(--warning); background: #fffbeb; }
-        .node.decision { border-left: 4px solid var(--danger); border-radius: 20px; text-align: center; }
-        .node.end { border-left: 4px solid var(--accent); }
-
-        /* Flow Logic Indicators */
-        .flow-logic {
-            position: absolute;
-            right: 100%;
-            top: -15px;
-            background: var(--accent);
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            white-space: nowrap;
-        }
-
-        .branch-container {
-            display: flex;
-            gap: 2rem;
-            margin-top: 1rem;
-            padding-bottom: 1rem;
-        }
-        
-        .branch {
-            flex: 1;
-            position: relative;
-        }
-
-        /* --- Responsive Design --- */
-        @media (max-width: 900px) {
-            .doc-grid { grid-template-columns: 1fr; }
-            .sidebar { display: none; }
-            .swimlane { grid-template-columns: 1fr; }
-            .swimlane-label { border-right: none; border-bottom: 2px dashed var(--border); margin-bottom: 1rem; justify-content: flex-start; text-align: left; }
-            .flow-nodes::before { left: 10px; }
-            .node-wrapper::after { left: -11px; }
-            .node-wrapper { padding-left: 20px; }
-        }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="brand">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-            Sophyra<span>HR Agent</span>
-        </div>
+        <div class="brand">Sophyra <span>Architecture</span></div>
         <nav>
-            <button class="nav-btn active" onclick="switchTab('sdlc')">SDLC Document</button>
-            <button class="nav-btn" onclick="switchTab('flow')">Architecture Flowchart</button>
+            <button onclick="scrollToSection('flowchart')">Flowchart</button>
+            <button onclick="scrollToSection('er-diagram')">ER Diagram</button>
+            <button onclick="scrollToSection('sdlc')">SDLC</button>
         </nav>
     </header>
 
-    <div class="container">
-        
-        <!-- SECTION 1: SDLC DOCUMENTATION -->
-        <div id="sdlc" class="view-section active">
-            <div class="doc-grid">
-                <aside class="sidebar">
-                    <ul>
-                        <li><a href="#overview">1. Overview & Stack</a></li>
-                        <li><a href="#database">2. Database Schema</a></li>
-                        <li><a href="#rls">3. RLS Policies</a></li>
-                        <li><a href="#frontend">4. Frontend Structure</a></li>
-                        <li><a href="#api">5. Backend API</a></li>
-                        <li><a href="#docker">6. Deployment</a></li>
-                    </ul>
-                </aside>
+    <div class="main-container">
 
-                <main>
-                    <section id="overview" class="content-card">
-                        <h1>Project Overview</h1>
-                        <p>A production-grade SaaS platform for AI-driven recruitment interviews. Features include mock interviews, automated LLM-based scoring, automated ticketing for real interviews, and multi-tenant RBAC.</p>
-                        <br>
-                        <h3>Tech Stack</h3>
-                        <table>
-                            <tr><th>Layer</th><th>Technology</th><th>Purpose</th></tr>
-                            <tr><td>Frontend</td><td>React (Vite), TailwindCSS</td><td>Single Page Application UI</td></tr>
-                            <tr><td>Backend</td><td>Node.js / Express</td><td>API Gateway & Auth Middleware</td></tr>
-                            <tr><td>Database</td><td>Supabase (PostgreSQL)</td><td>Persistence, Auth, RLS, Storage</td></tr>
-                            <tr><td>AI/LLM</td><td>Ollama API (Llama3/Mistral)</td><td>Local inference for privacy</td></tr>
-                            <tr><td>Infra</td><td>Docker, Nginx</td><td>Single VM Deployment</td></tr>
-                        </table>
-                    </section>
+        <!-- SECTION 1: ARCHITECTURE FLOWCHART -->
+        <div class="diagram-section" id="flowchart">
+            <div class="section-header">
+                <h2>1. System Logic Flowchart</h2>
+                <button class="toggle-btn" onclick="toggleSection(this)">Show Diagram</button>
+            </div>
+            <div class="section-body">
+                <p style="margin-bottom: 1rem; color: var(--secondary);">Cross-functional view of HR, Candidate, and AI Worker interactions.</p>
+                
+                <div class="swimlane-grid">
+                    <!-- Headers -->
+                    <div class="sl-header">HR / Admin</div>
+                    <div class="sl-header">Candidate</div>
+                    <div class="sl-header">Backend / AI Worker</div>
 
-                    <section id="database" class="content-card">
-                        <h2>Database Schema (Supabase SQL)</h2>
-                        <pre><code>-- 1. Companies (Tenants)
-CREATE TABLE companies (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name TEXT NOT NULL,
-    plan_type TEXT DEFAULT 'starter',
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
+                    <!-- Column 1: HR -->
+                    <div class="sl-col">
+                        <div class="node">
+                            <strong>Login & Create Job</strong>
+                            Define skills & criteria.
+                        </div>
+                        <div class="arrow-down">↓</div>
+                        <div class="node">
+                            <strong>Schedule Interview</strong>
+                            Input email, generate token.
+                        </div>
+                        <div class="arrow-down" style="height: 60px;">↓</div>
+                        <div class="node end">
+                            <strong>Review Ticket</strong>
+                            If Score > Threshold.
+                        </div>
+                        <div class="arrow-down">↓</div>
+                        <div class="node">
+                            <strong>Real Interview</strong>
+                            Book meeting slot.
+                        </div>
+                    </div>
 
--- 2. Users
-CREATE TABLE users (
-    id UUID REFERENCES auth.users PRIMARY KEY,
-    email TEXT,
-    role TEXT CHECK (role IN ('super_admin', 'admin', 'hr')),
-    company_id UUID REFERENCES companies(id),
-    full_name TEXT
-);
+                    <!-- Column 2: Candidate -->
+                    <div class="sl-col">
+                        <div class="node" style="margin-top: 100px;">
+                            <strong>Open Link</strong>
+                            Validate Token.
+                        </div>
+                        <div class="arrow-down">↓</div>
+                        <div class="node decision">
+                            <strong>Consent?</strong>
+                            Allow Camera/Mic.
+                        </div>
+                        <div class="arrow-down">↓</div>
+                        <div class="node">
+                            <strong>Q&A Session</strong>
+                            Answer AI Questions.
+                        </div>
+                        <div class="arrow-down">↓</div>
+                        <div class="node end">
+                            <strong>Submit</strong>
+                            Save Transcript.
+                        </div>
+                    </div>
 
--- 3. Job Roles
-CREATE TABLE job_roles (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    company_id UUID REFERENCES companies(id),
-    title TEXT NOT NULL,
-    skills JSONB, -- e.g. ["python", "communication"]
-    difficulty TEXT,
-    created_by UUID REFERENCES users(id)
-);
-
--- 4. Interviews
-CREATE TABLE interviews (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    job_id UUID REFERENCES job_roles(id),
-    candidate_email TEXT,
-    candidate_name TEXT,
-    token UUID UNIQUE DEFAULT gen_random_uuid(),
-    status TEXT DEFAULT 'pending', -- pending, active, completed, scored
-    expires_at TIMESTAMPTZ
-);
-
--- 5. Interview Sessions (Transcript)
-CREATE TABLE interview_sessions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    interview_id UUID REFERENCES interviews(id),
-    question TEXT,
-    answer TEXT,
-    metadata JSONB -- timing, sentiment analysis
-);
-
--- 6. Reports & Scores
-CREATE TABLE reports (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    interview_id UUID REFERENCES interviews(id),
-    skill_score INTEGER,
-    comm_score INTEGER,
-    strengths TEXT[],
-    weaknesses TEXT[],
-    red_flags TEXT[],
-    final_verdict TEXT, -- shortlist, reject, hold
-    generated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- 7. Tickets (Real HR Booking)
-CREATE TABLE tickets (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    interview_id UUID REFERENCES interviews(id),
-    status TEXT DEFAULT 'open', -- open, booked, closed
-    priority TEXT, -- high, medium
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);</code></pre>
-                    </section>
-
-                    <section id="rls" class="content-card">
-                        <h2>Row Level Security (RLS) Policies</h2>
-                        <p>Strict isolation of tenant data.</p>
-                        <ul>
-                            <li><strong>Enable RLS:</strong> <code>ALTER TABLE job_roles ENABLE ROW LEVEL SECURITY;</code></li>
-                            <li><strong>HR Policy:</strong> <code>CREATE POLICY "HR can see own company jobs" ON job_roles FOR SELECT USING (company_id IN (SELECT company_id FROM users WHERE id = auth.uid()));</code></li>
-                            <li><strong>Super Admin Policy:</strong> <code>CREATE POLICY "Super Admin sees all" ON all_tables FOR ALL USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'super_admin'));</code></li>
-                            <li><strong>Candidate Policy:</strong> <code>CREATE POLICY "Candidate can only update own interview" ON interviews FOR UPDATE USING (token = current_token);</code></li>
-                        </ul>
-                    </section>
-
-                    <section id="frontend" class="content-card">
-                        <h2>React Project Structure</h2>
-                        <pre><code>/src
-  /components
-    /ui
-      Button.jsx
-      Card.jsx
-      Modal.jsx
-    /dashboard
-      HRDashboard.jsx
-      JobRoleForm.jsx
-      InterviewScheduler.jsx
-    /candidate
-      InterviewInterface.jsx
-      ConsentScreen.jsx
-      QuestionFlow.jsx
-    /reports
-      ReportView.jsx
-      PDFDownload.jsx
-  /pages
-    Landing.jsx
-    Login.jsx
-    AdminPanel.jsx
-  /lib
-    supabaseClient.js
-    api.js
-  /hooks
-    useInterview.js
-    useAuth.js</code></pre>
-                    </section>
-
-                    <section id="api" class="content-card">
-                        <h2>Backend API (Node/FastAPI)</h2>
-                        <p>Endpoints serving as the bridge between React and Ollama.</p>
-                        <table>
-                            <tr><th>Method</th><th>Endpoint</th><th>Logic</th></tr>
-                            <tr><td>POST</td><td>/api/interview/question</td><td>Sends context & history to Ollama, retrieves next question.</td></tr>
-                            <tr><td>POST</td><td>/api/worker/evaluate</td><td>Background worker. Takes full transcript, calculates scores.</td></tr>
-                            <tr><td>POST</td><td>/api/tickets/create</td><td>If score > threshold, creates ticket in DB & sends email.</td></tr>
-                        </table>
-                    </section>
-                    
-                    <section id="docker" class="content-card">
-                        <h2>Docker Configuration</h2>
-                        <pre><code>version: '3.8'
-services:
-  frontend:
-    build: ./frontend
-    ports: ["3000:3000"]
-  
-  backend:
-    build: ./backend
-    environment:
-      - OLLAMA_HOST=http://ollama:11434
-      - DATABASE_URL=${DATABASE_URL}
-    depends_on:
-      - ollama
-  
-  ollama:
-    image: ollama/ollama:latest
-    volumes:
-      - ollama_data:/root/.ollama
-    pull_policy: always
-
-volumes:
-  ollama_data:</code></pre>
-                    </section>
-                </main>
+                    <!-- Column 3: AI/Backend -->
+                    <div class="sl-col">
+                        <div class="node ai" style="margin-top: 40px;">
+                            <strong>Send Email</strong>
+                            SMTP Notification.
+                        </div>
+                        <div class="arrow-down">↓</div>
+                        <div class="node ai">
+                            <strong>Generate Questions</strong>
+                            Ollama API Context.
+                        </div>
+                        <div class="arrow-down">↓</div>
+                        <div class="node decision" style="margin-top: 80px;">
+                            <strong>Evaluate</strong>
+                            Score > 80%?
+                        </div>
+                        <div style="display:flex; gap: 10px; font-size: 0.8rem; color: var(--secondary);">
+                            <span style="flex:1; text-align:right;">No → Reject</span>
+                            <span style="flex:1;">Yes → Ticket</span>
+                        </div>
+                        <div class="arrow-down">↓</div>
+                        <div class="node ai">
+                            <strong>Create Ticket</strong>
+                            Auto-insert DB record.
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- SECTION 2: ARCHITECTURE FLOWCHART -->
-        <div id="flow" class="view-section">
-            <div style="margin-bottom: 2rem; text-align: center;">
-                <h2>System Architecture & User Journey</h2>
-                <p>Visual flow of the HR, Candidate, and AI Worker interactions.</p>
+        <!-- SECTION 2: ER DIAGRAM -->
+        <div class="diagram-section" id="er-diagram">
+            <div class="section-header">
+                <h2>2. Database Entity Relationships (ER)</h2>
+                <button class="toggle-btn" onclick="toggleSection(this)">Show Diagram</button>
             </div>
-
-            <div class="flow-container">
+            <div class="section-body">
+                <p style="margin-bottom: 1rem; color: var(--secondary);">Schema visualization showing primary keys (PK), foreign keys (FK), and table links.</p>
                 
-                <!-- LANE 1: HR ADMIN -->
-                <div class="swimlane">
-                    <div class="swimlane-label">HR / Admin</div>
-                    <div class="flow-nodes">
-                        <div class="node-wrapper">
-                            <div class="node start">
-                                <h4>Login & Dashboard</h4>
-                                <p>Authentication via Supabase Auth.</p>
-                            </div>
+                <div class="er-grid">
+                    <!-- Tenancy Core -->
+                    <div class="er-table">
+                        <div class="er-table header">
+                            <h3>companies</h3>
                         </div>
-                        <div class="node-wrapper">
-                            <div class="node process">
-                                <h4>Create Job Role</h4>
-                                <p>Define skills, difficulty, type (Frontend/Backend).</p>
-                            </div>
+                        <div class="er-row"><span class="pk">id (UUID)</span> <span>PK</span></div>
+                        <div class="er-row"><span>name</span> <span>Text</span></div>
+                        <div class="er-row"><span>plan</span> <span>Enum</span></div>
+                    </div>
+
+                    <div class="er-table">
+                        <div class="er-table header">
+                            <h3>users</h3>
                         </div>
-                        <div class="node-wrapper">
-                            <div class="node process">
-                                <h4>Schedule Interview</h4>
-                                <p>Input candidate details. System generates secure Token.</p>
-                            </div>
+                        <div class="er-row"><span class="pk">id (UUID)</span> <span>PK</span></div>
+                        <div class="er-row"><span class="fk">company_id</span> <span>FK</span></div>
+                        <div class="er-row"><span>email</span> <span>Text</span></div>
+                        <div class="er-row"><span>role</span> <span>Enum</span></div>
+                    </div>
+
+                    <div class="er-table">
+                        <div class="er-table header">
+                            <h3>job_roles</h3>
                         </div>
-                        <div class="node-wrapper">
-                            <div class="node process">
-                                <h4>System Notification</h4>
-                                <p>Email sent to Candidate with Link + Token.</p>
-                            </div>
+                        <div class="er-row"><span class="pk">id (UUID)</span> <span>PK</span></div>
+                        <div class="er-row"><span class="fk">company_id</span> <span>FK</span></div>
+                        <div class="er-row"><span>title</span> <span>Text</span></div>
+                        <div class="er-row"><span>skills (JSONB)</span> <span>Arr</span></div>
+                    </div>
+
+                    <!-- Interview Flow -->
+                    <div class="er-table" style="border-top-color: var(--purple);">
+                        <div class="er-table header" style="background: var(--purple);">
+                            <h3>interviews</h3>
                         </div>
-                        <div class="node-wrapper">
-                            <div class="node end">
-                                <h4>Wait for Submission</h4>
-                                <p>HR Dashboard shows "In Progress".</p>
-                            </div>
+                        <div class="er-row"><span class="pk">id (UUID)</span> <span>PK</span></div>
+                        <div class="er-row"><span class="fk">job_id</span> <span>FK</span></div>
+                        <div class="er-row"><span>token</span> <span>UUID</span></div>
+                        <div class="er-row"><span>status</span> <span>Enum</span></div>
+                    </div>
+
+                    <div class="er-table" style="border-top-color: var(--purple);">
+                        <div class="er-table header" style="background: var(--purple);">
+                            <h3>interview_sessions</h3>
                         </div>
+                        <div class="er-row"><span class="pk">id (UUID)</span> <span>PK</span></div>
+                        <div class="er-row"><span class="fk">interview_id</span> <span>FK</span></div>
+                        <div class="er-row"><span>question</span> <span>Text</span></div>
+                        <div class="er-row"><span>answer</span> <span>Text</span></div>
+                    </div>
+
+                    <div class="er-table" style="border-top-color: var(--purple);">
+                        <div class="er-table header" style="background: var(--purple);">
+                            <h3>reports</h3>
+                        </div>
+                        <div class="er-row"><span class="pk">id (UUID)</span> <span>PK</span></div>
+                        <div class="er-row"><span class="fk">interview_id</span> <span>FK (1:1)</span></div>
+                        <div class="er-row"><span>skill_score</span> <span>Int</span></div>
+                        <div class="er-row"><span>final_verdict</span> <span>Text</span></div>
+                    </div>
+
+                    <!-- Tickets System -->
+                    <div class="er-table" style="border-top-color: var(--warning); grid-column: span 2; justify-self: center; width: 50%;">
+                        <div class="er-table header" style="background: var(--warning);">
+                            <h3>tickets (USP)</h3>
+                        </div>
+                        <div class="er-row"><span class="pk">id (UUID)</span> <span>PK</span></div>
+                        <div class="er-row"><span class="fk">interview_id</span> <span>FK</span></div>
+                        <div class="er-row"><span>status</span> <span>Open/Booked</span></div>
+                        <div class="er-row"><span>priority</span> <span>High/Med</span></div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- LANE 2: CANDIDATE -->
-                <div class="swimlane">
-                    <div class="swimlane-label">Candidate</div>
-                    <div class="flow-nodes">
-                        <div class="node-wrapper">
-                            <div class="node start">
-                                <h4>Open Interview Link</h4>
-                                <p>Landing page with Token validation.</p>
-                            </div>
-                        </div>
-                        <div class="node-wrapper">
-                            <div class="node process">
-                                <h4>Consent & Setup</h4>
-                                <p>Allow microphone/video access. Read instructions.</p>
-                            </div>
-                        </div>
-                        <div class="node-wrapper">
-                            <div class="node process">
-                                <h4>AI Interview Loop</h4>
-                                <p>Q&A exchange with Dynamic Follow-ups.</p>
-                            </div>
-                        </div>
-                        <div class="node-wrapper">
-                            <div class="node end">
-                                <h4>Submit Interview</h4>
-                                <p>Transcript saved to DB. Status -> 'Completed'.</p>
-                            </div>
+        <!-- SECTION 3: SDLC TIMELINE -->
+        <div class="diagram-section" id="sdlc">
+            <div class="section-header">
+                <h2>3. SDLC (Software Development Life Cycle)</h2>
+                <button class="toggle-btn" onclick="toggleSection(this)">Show Diagram</button>
+            </div>
+            <div class="section-body">
+                <p style="margin-bottom: 1rem; color: var(--secondary);">Step-by-step development roadmap for the Sophyra Platform.</p>
+                
+                <div class="timeline">
+                    <!-- Phase 1 -->
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <span class="phase-badge">Phase 1: Planning</span>
+                            <h3>Requirements Analysis & Stack Selection</h3>
+                            <ul class="task-list">
+                                <li>Define User Roles (HR, Candidate, Admin).</li>
+                                <li>Select Supabase for Auth/Database.</li>
+                                <li>Select Ollama for on-premise LLM.</li>
+                                <li>Design Multi-tenant RBAC strategy.</li>
+                            </ul>
                         </div>
                     </div>
-                </div>
 
-                <!-- LANE 3: AI & BACKEND WORKER -->
-                <div class="swimlane">
-                    <div class="swimlane-label">Backend / AI</div>
-                    <div class="flow-nodes">
-                        <div class="node-wrapper">
-                            <div class="node ai">
-                                <h4>Scoring Worker Trigger</h4>
-                                <p>Database trigger on 'interviews' update.</p>
-                            </div>
+                    <!-- Phase 2 -->
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <span class="phase-badge">Phase 2: Design</span>
+                            <h3>Architecture & UI/UX</h3>
+                            <ul class="task-list">
+                                <li>Create Database Schema (ER Diagram).</li>
+                                <li>Design Interview Interface (Bento grid style).</li>
+                                <li>Design API Contracts (RESTful endpoints).</li>
+                                <li>Define "Ticket Logic" threshold rules.</li>
+                            </ul>
                         </div>
-                        <div class="node-wrapper">
-                            <div class="node ai">
-                                <h4>LLM Evaluation (Ollama)</h4>
-                                <p>Analyze transcript for skills, red flags, tone.</p>
-                            </div>
-                        </div>
-                        <div class="node-wrapper">
-                            <div class="node decision">
-                                <h4>Score Threshold Check</h4>
-                                <p>Is Score > 80% (Configurable)?</p>
-                            </div>
-                        </div>
-                        
-                        <!-- BRANCHING LOGIC -->
-                        <div class="branch-container">
-                            <!-- Branch YES -->
-                            <div class="branch">
-                                <span class="flow-logic">YES (High Score)</span>
-                                <div class="node-wrapper" style="margin-top: 10px;">
-                                    <div class="node process" style="border-left-color: var(--success);">
-                                        <h4>Create Ticket</h4>
-                                        <p>Auto-create "Real Interview" ticket.</p>
-                                    </div>
-                                </div>
-                                <div class="node-wrapper">
-                                    <div class="node process">
-                                        <h4>Notify HR</h4>
-                                        <p>Send email/alert to HR dashboard.</p>
-                                    </div>
-                                </div>
-                                <div class="node-wrapper">
-                                    <div class="node end">
-                                        <h4>Ready for Booking</h4>
-                                        <p>HR views report & schedules slot.</p>
-                                    </div>
-                                </div>
-                            </div>
+                    </div>
 
-                            <!-- Branch NO -->
-                            <div class="branch">
-                                <span class="flow-logic">NO (Low Score)</span>
-                                <div class="node-wrapper" style="margin-top: 10px;">
-                                    <div class="node process" style="border-left-color: var(--danger);">
-                                        <h4>Generate Rejection Report</h4>
-                                        <p>Save reasons to 'reports' table.</p>
-                                    </div>
-                                </div>
-                                <div class="node-wrapper">
-                                    <div class="node end">
-                                        <h4>Archive Candidate</h4>
-                                        <p>Status set to 'Rejected'. No ticket created.</p>
-                                    </div>
-                                </div>
-                            </div>
+                    <!-- Phase 3 -->
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <span class="phase-badge">Phase 3: Implementation</span>
+                            <h3>Core Development</h3>
+                            <ul class="task-list">
+                                <li><strong>Backend:</strong> Node.js API + Ollama integration.</li>
+                                <li><strong>Database:</strong> Supabase setup + RLS Policies.</li>
+                                <li><strong>Frontend:</strong> React Vite app, Job Creation Flow.</li>
+                                <li><strong>AI Logic:</strong> Prompt engineering for scoring.</li>
+                            </ul>
                         </div>
+                    </div>
 
+                    <!-- Phase 4 -->
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <span class="phase-badge">Phase 4: Testing</span>
+                            <h3>QA & Validation</h3>
+                            <ul class="task-list">
+                                <li>Unit testing for scoring algorithms.</li>
+                                <li>E2E testing for Interview flow.</li>
+                                <li>Security Audit (RLS verification).</li>
+                                <li>Load testing for concurrent interviews.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Phase 5 -->
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <span class="phase-badge">Phase 5: Deployment</span>
+                            <h3>Docker & CI/CD</h3>
+                            <ul class="task-list">
+                                <li>Containerize App, Backend, and Ollama.</li>
+                                <li>Configure Nginx Reverse Proxy.</li>
+                                <li>Setup Single VM deployment script.</li>
+                                <li>Configure SMTP for Email notifications.</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -652,15 +560,37 @@ volumes:
     </div>
 
     <script>
-        function switchTab(tabId) {
-            // Update Buttons
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-
-            // Update Views
-            document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
+        // Toggle Section Visibility
+        function toggleSection(btn) {
+            const sectionBody = btn.parentElement.nextElementSibling;
+            const isOpen = sectionBody.classList.contains('open');
+            
+            if (isOpen) {
+                sectionBody.classList.remove('open');
+                btn.textContent = 'Show Diagram';
+            } else {
+                sectionBody.classList.add('open');
+                btn.textContent = 'Hide Diagram';
+            }
         }
+
+        // Scroll to section smoothly
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            // Open the section if closed
+            const btn = el.querySelector('.toggle-btn');
+            const body = el.querySelector('.section-body');
+            if (!body.classList.contains('open')) {
+                btn.click();
+            }
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Initialize: Open first section by default
+        document.addEventListener('DOMContentLoaded', () => {
+             const firstBtn = document.querySelector('.toggle-btn');
+             if(firstBtn) firstBtn.click();
+        });
     </script>
 </body>
 </html>
