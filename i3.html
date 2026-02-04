@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sophyra HR Agent - Complete Master Blueprint</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --accent: #0f172a;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --purple: #8b5cf6;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- Sidebar Navigation --- */
+        .sidebar {
+            width: 260px;
+            background: var(--accent);
+            color: white;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .brand {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            padding-left: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.8rem 1rem;
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: var(--radius);
+            margin-bottom: 0.5rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover { background: rgba(255,255,255,0.05); color: white; }
+        .nav-link.active { background: rgba(37, 99, 235, 0.2); color: var(--primary); border-left-color: var(--primary); }
+
+        /* --- Main Content --- */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 3rem;
+            max-width: 1400px;
+        }
+
+        .section { display: none; animation: fadeIn 0.4s ease; }
+        .section.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        h2 { font-size: 1.5rem; color: var(--text-main); margin-top: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+        h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; }
+
+        /* --- Cards & Grid --- */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* --- Code Blocks --- */
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: var(--radius);
+            overflow-x: auto;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+        }
+        
+        .code-label {
+            background: var(--primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        /* --- Flow Diagrams (Swimlane) --- */
+        .swimlane-container {
+            display: grid;
+            grid-template-columns: 150px 1fr 1fr 1fr;
+            border: 1px solid var(--border);
+            background: white;
+            margin-top: 1rem;
+        }
+
+        .sl-header {
+            background: #f1f5f9;
+            padding: 10px;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        .sl-col {
+            border-right: 1px solid var(--border);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+        }
+
+        .node {
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            background: white;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .node.start { border-color: var(--success); border-left: 4px solid var(--success); }
+        .node.ai { border-color: var(--purple); border-left: 4px solid var(--purple); background: #f5f3ff; }
+        .node.decision { border-color: var(--warning); border-radius: 20px; border-left: 4px solid var(--warning); }
+
+        /* --- User Flow Cards (UX) --- */
+        .flow-step {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            align-items: flex-start;
+        }
+        .step-num {
+            background: var(--accent);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* --- SDLC Timeline --- */
+        .timeline { margin-top: 2rem; border-left: 2px solid var(--border); padding-left: 2rem; }
+        .timeline-item { margin-bottom: 2rem; position: relative; }
+        .timeline-item::before {
+            content: ''; position: absolute; left: -2.6rem; top: 5px; width: 1rem; height: 1rem;
+            background: var(--primary); border-radius: 50%; border: 4px solid white; box-shadow: 0 0 0 1px var(--primary);
+        }
+
+        /* --- Badge --- */
+        .badge { padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+        .badge-req { background: #fee2e2; color: var(--danger); }
+        .badge-opt { background: #e0f2fe; color: var(--primary); }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+        <div class="brand">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            Sophyra Blueprint
+        </div>
+        
+        <a class="nav-link active" onclick="showSection('architecture')">1. Architecture & Git</a>
+        <a class="nav-link" onclick="showSection('database')">2. Database (ER Diagram)</a>
+        <a class="nav-link" onclick="showSection('missing')">3. Missing Critical Parts</a>
+        <a class="nav-link" onclick="showSection('roles')">4. Role-Based UI Flows</a>
+        <a class="nav-link" onclick="showSection('flowchart')">5. System Flowchart</a>
+        <a class="nav-link" onclick="showSection('sdlc')">6. SDLC Timeline</a>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- SECTION 1: ARCHITECTURE -->
+        <section id="architecture" class="section active">
+            <h1>System Architecture & Git Structure</h1>
+            <p class="text-muted">The "Monorepo" structure separating concerns for Frontend, Backend, and Database.</p>
+
+            <div class="card">
+                <div class="card-title">
+                    <span>Folder Structure</span>
+                    <span class="code-label">git</span>
+                </div>
+                <pre>
+sophyra-hr-agent/
+├── .github/workflows/deploy.yml    # CI/CD Pipeline
+├── docker-compose.yml               # Orchestration (Nginx, Redis, Ollama)
+├── client/                         # [React Vite]
+│   ├── src/
+│   │   ├── pages/                  # Landing, Interview, Dashboard
+│   │   └── lib/supabase.ts         # Auth Client
+│   └── Dockerfile
+├── server/                         # [Node/Express API]
+│   ├── src/
+│   │   ├── worker.ts               # Background Scoring Worker
+│   │   ├── services/ollama.ts      # LLM Calls
+│   │   └── routes/api.ts
+│   └── Dockerfile
+└── db/                             # [Supabase Migrations]
+    ├── 001_schema.sql
+    └── 002_functions.sql           # DB Triggers</pre>
+            </div>
+
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-title">Frontend (Client)</div>
+                    <p>Single Page App. Handles recording, streaming AI responses, and Dashboard UI. Uses Supabase for Auth.</p>
+                </div>
+                <div class="card">
+                    <div class="card-title">Backend (Server)</div>
+                    <p>API Gateway. Validates tokens, serves media, and manages the queue. Does not run AI logic directly on the request thread.</p>
+                </div>
+                <div class="card">
+                    <div class="card-title">Infrastructure</div>
+                    <p>Docker Compose manages the internal network. Nginx handles SSL. Redis queues long tasks.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: DATABASE -->
+        <section id="database" class="section">
+            <h1>Database & Entity Relationships</h1>
+            <p>Schema visualization showing Multi-tenant structure.</p>
+
+            <div class="card">
+                <div class="card-title">ER Diagram</div>
+                <div class="swimlane-container">
+                    <div class="sl-header">Company</div>
+                    <div class="sl-header">Users</div>
+                    <div class="sl-header">Jobs</div>
+                    <div class="sl-header">Interviews</div>
+
+                    <div class="sl-col">
+                        <div class="node start">
+                            <strong>companies</strong><br>
+                            id (PK)<br>
+                            plan<br>
+                            name
+                        </div>
+                    </div>
+                    <div class="sl-col">
+                        <div class="node">
+                            <strong>users</strong><br>
+                            id (PK)<br>
+                            <span style="color:red">company_id (FK)</span><br>
+                            role
+                        </div>
+                    </div>
+                    <div class="sl-col">
+                        <div class="node">
+                            <strong>job_roles</strong><br>
+                            id (PK)<br>
+                            skills (JSON)<br>
+                            difficulty
+                        </div>
+                    </div>
+                    <div class="sl-col">
+                        <div class="node ai">
+                            <strong>interviews</strong><br>
+                            token (UUID)<br>
+                            status<br>
+                            session_id
+                        </div>
+                        <div class="node">
+                            <strong>reports</strong><br>
+                            score<br>
+                            red_flags<br>
+                            verdict
+                        </div>
+                        <div class="node decision">
+                            <strong>tickets</strong><br>
+                            status<br>
+                            priority
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: MISSING PARTS -->
+        <section id="missing" class="section">
+            <h1>Missing Critical Components (Must-Haves)</h1>
+            <p>Identified gaps to move from prototype to production.</p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-title">1. Redis / BullMQ <span class="badge badge-req">Required</span></div>
+                    <p><strong>Why:</strong> Calling Ollama takes 30+ seconds. HTTP requests will timeout.</p>
+                    <p><strong>Solution:</strong> API pushes "Scoring Job" to Redis. Background Worker picks it up safely.</p>
+                </div>
+                <div class="card">
+                    <div class="card-title">2. DB Triggers <span class="badge badge-req">Required</span></div>
+                    <p><strong>Why:</strong> How does the Worker know the interview finished?</p>
+                    <p><strong>Solution:</strong> Postgres Trigger fires `http_post` to Worker on `status = 'completed'`.</p>
+                </div>
+                <div class="card">
+                    <div class="card-title">3. Supabase Storage <span class="badge badge-opt">Optional</span></div>
+                    <p><strong>Why:</strong> Where do video recordings go?</p>
+                    <p><strong>Solution:</strong> Upload blobs to Storage bucket with RLS. Link in Report.</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-title">Implementation: The Trigger (SQL)</div>
+                <pre>
+-- Run this in Supabase SQL Editor
+CREATE OR REPLACE FUNCTION notify_worker()
+RETURNS TRIGGER AS $$ BEGIN
+  PERFORM net.http_post(
+    url := 'https://api.sophyra.com/webhooks/interview-complete',
+    headers := jsonb_build_object('Content-Type', 'application/json'),
+    body := jsonb_build_object('interview_id', NEW.id)
+  );
+  RETURN NEW;
+END;
+ $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER on_interview_completion
+AFTER UPDATE OF status ON interviews
+FOR EACH ROW
+WHEN (NEW.status = 'completed')
+EXECUTE FUNCTION notify_worker();</pre>
+            </div>
+        </section>
+
+        <!-- SECTION 4: ROLE FLOWS -->
+        <section id="roles" class="section">
+            <h1>Role-Based UI/UX Flows</h1>
+            <p>Detailed interaction flows for specific users.</p>
+
+            <div class="card-grid">
+                <!-- CANDIDATE -->
+                <div class="card">
+                    <div class="card-title" style="color: var(--primary);">1. Candidate Flow</div>
+                    <div class="flow-step">
+                        <div class="step-num">1</div>
+                        <div><strong>Open Link:</strong> Clean landing page. No login required.</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="step-num">2</div>
+                        <div><strong>Setup:</strong> Allow Camera/Mic modal. Show live preview.</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="step-num">3</div>
+                        <div><strong>Interview:</strong> Split screen (AI Question + Video). Typing animation while AI thinks.</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="step-num">4</div>
+                        <div><strong>Done:</strong> Confetti screen. "HR will contact you soon."</div>
+                    </div>
+                </div>
+
+                <!-- HR -->
+                <div class="card">
+                    <div class="card-title" style="color: var(--purple);">2. HR / Recruiter</div>
+                    <div class="flow-step">
+                        <div class="step-num">1</div>
+                        <div><strong>Dashboard:</strong> Bento Grid. See "Active Interviews" & "New Tickets" count.</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="step-num">2</div>
+                        <div><strong>Create Job:</strong> Wizard form. Select Skills (React, Python).</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="step-num">3</div>
+                        <div><strong>Ticket Alert:</strong> If score > 80%, Toast Notification pops up.</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="step-num">4</div>
+                        <div><strong>Booking:</strong> Click "Book Interview" on Ticket. Calendar picker appears.</div>
+                    </div>
+                </div>
+
+                <!-- ADMIN -->
+                <div class="card">
+                    <div class="card-title" style="color: var(--danger);">3. Super Admin</div>
+                    <div class="flow-step">
+                        <div class="step-num">1</div>
+                        <div><strong>Metrics:</strong> Dark mode chart. Revenue & API Usage.</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="step-num">2</div>
+                        <div><strong>Tenants:</strong> View company list. Check for abuse.</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="step-num">3</div>
+                        <div><strong>Logs:</strong> Terminal-style viewer for Worker errors.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: FLOWCHART -->
+        <section id="flowchart" class="section">
+            <h1>System Process Flowchart</h1>
+            <p>Logic view of the interview lifecycle.</p>
+
+            <div class="card">
+                <div class="swimlane-container">
+                    <div class="sl-header">User Action</div>
+                    <div class="sl-header">Supabase DB</div>
+                    <div class="sl-header">Worker/AI</div>
+                    <div class="sl-header">Result</div>
+
+                    <div class="sl-col">
+                        <div class="node start">HR Creates Job</div>
+                        <div class="node">Candidate Submits</div>
+                    </div>
+                    
+                    <div class="sl-col">
+                        <div class="node">Save Job Data</div>
+                        <div class="node ai" style="border-left: 4px solid var(--primary);">
+                            Status = 'Completed'
+                            <br><small>Trigger Fires</small>
+                        </div>
+                    </div>
+                    
+                    <div class="sl-col">
+                        <div class="node"></div> <!-- Empty for alignment -->
+                        <div class="node decision">Evaluate?</div>
+                        <div class="node" style="margin-top: -10px;">Call Ollama (LLM)</div>
+                        <div class="node">Calculate Score</div>
+                    </div>
+                    
+                    <div class="sl-col">
+                        <div class="node"></div>
+                        <div class="node">Save Report</div>
+                        <div class="node decision">Score > 80?</div>
+                        <div class="node success" style="border-left: 4px solid var(--success);">Create Ticket</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: SDLC -->
+        <section id="sdlc" class="section">
+            <h1>SDLC Roadmap</h1>
+            <p>Software Development Life Cycle for implementation.</p>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h3>Phase 1: Discovery</h3>
+                    <p>Define Roles (HR, Candidate). Select Stack (Supabase + Ollama). Design Ticket Logic.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>Phase 2: Architecture</h3>
+                    <p>Create DB Schema. Design Docker Compose. Set up Supabase Project.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>Phase 3: Core Dev</h3>
+                    <p><strong>Backend:</strong> Node API + Worker + Redis.<br><strong>Frontend:</strong> React Dashboard + Interview Interface.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>Phase 4: Integration</h3>
+                    <p>Connect Frontend to Ollama via Backend. Implement DB Triggers.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3>Phase 5: Testing</h3>
+                    <p>Test Scoring Logic. Verify RLS Policies. Load Test concurrent interviews.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        function showSection(id) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            // Show selected
+            document.getElementById(id).classList.add('active');
+            
+            // Update Nav Active State
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
