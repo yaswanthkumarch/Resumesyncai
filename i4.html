@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sophyra - Complete Product Flowchart</title>
+    <style>
+        :root {
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --lane-setup: #e0f2fe;
+            --lane-candidate: #dcfce7;
+            --lane-ai: #f3e8ff;
+            --lane-outcome: #ffedd5;
+            --text-main: #0f172a;
+            --line-color: #94a3b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px;
+            overflow-x: auto;
+        }
+
+        .container {
+            min-width: 1000px; /* Ensure flowchart doesn't squash */
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 { text-align: center; margin-bottom: 40px; }
+
+        /* --- FLOWCHART GRID --- */
+        .flowchart {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 0;
+            background: white;
+            border: 1px solid var(--line-color);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        /* LANE HEADERS */
+        .lane-header {
+            padding: 15px;
+            text-align: center;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--line-color);
+            border-right: 1px solid var(--line-color);
+        }
+
+        .lane-setup { background: var(--lane-setup); }
+        .lane-candidate { background: var(--lane-candidate); }
+        .lane-ai { background: var(--lane-ai); }
+        .lane-outcome { background: var(--lane-outcome); }
+
+        /* LANE COLUMNS */
+        .lane {
+            border-right: 1px solid var(--line-color);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .lane:last-child { border-right: none; }
+
+        /* VERTICAL CONNECTOR LINES */
+        .lane::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background: var(--line-color);
+            z-index: 0;
+        }
+
+        /* NODES (BOXES) */
+        .node {
+            background: white;
+            border: 2px solid var(--text-main);
+            padding: 15px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 220px;
+            text-align: center;
+            font-size: 0.85rem;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 40px; /* Space for arrow */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .node:hover { transform: scale(1.02); }
+
+        /* ARROW DOWN */
+        .node::after {
+            content: '↓';
+            position: absolute;
+            bottom: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            color: var(--line-color);
+        }
+
+        /* SPECIAL NODE TYPES */
+        .node.start { border-radius: 20px; border-color: #2563eb; background: #eff6ff; font-weight: bold; }
+        .node.decision { 
+            transform: rotate(45deg); 
+            margin: 40px auto; 
+            width: 100px; height: 100px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .node.decision span { transform: rotate(-45deg); display: block; width: 140px; } /* Counter-rotate text */
+        
+        .node.process { border-color: #8b5cf6; background: #faf5ff; }
+        .node.success { border-color: #10b981; background: #ecfdf5; }
+        .node.fail { border-color: #ef4444; background: #fef2f2; }
+
+        /* DOTTED LINES FOR CROSS-LANE CONNECTIONS */
+        .cross-connect {
+            position: absolute;
+            height: 2px;
+            background: var(--line-color);
+            border-top: 2px dashed var(--line-color);
+            top: 50%;
+            z-index: 2;
+        }
+        
+        /* LABELS ON CONNECTORS */
+        .conn-label {
+            position: absolute;
+            background: white;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            border: 1px solid var(--line-color);
+            border-radius: 4px;
+            z-index: 3;
+            white-space: nowrap;
+        }
+
+        /* SPACERS FOR ALIGNMENT */
+        .spacer { height: 0px; margin-bottom: 0px; visibility: hidden; }
+
+        /* PRINT STYLES */
+        @media print {
+            .container { width: 100%; max-width: none; }
+            .flowchart { box-shadow: none; border: 1px solid #000; }
+            .node { box-shadow: none; border-color: #000; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Sophyra HR Agent: Complete Product Flow</h1>
+        
+        <div class="flowchart">
+            
+            <!-- LANE 1: SETUP & MANAGEMENT -->
+            <div class="lane">
+                <div class="lane-header lane-setup">1. Setup (Admin/HR)</div>
+                
+                <div class="node start">New Company Registration</div>
+                
+                <div class="node">Admin Invites<br>HR Recruiters</div>
+                
+                <div class="node process">Create Job Role<br>(Skills & Difficulty)</div>
+
+                <div class="node process">Generate Secure<br>Interview Link</div>
+
+                <!-- Spacer to wait for candidate -->
+                <div class="node" style="border-style: dashed; background: #f8fafc;">Wait for Candidate<br>Completion...</div>
+            </div>
+
+            <!-- LANE 2: CANDIDATE JOURNEY -->
+            <div class="lane">
+                <div class="lane-header lane-candidate">2. Candidate (External)</div>
+                
+                <div class="spacer" style="height: 80px;"></div> <!-- Align with Admin Invite -->
+
+                <div class="node start">Click Link &<br>Consent (GDPR)</div>
+
+                <div class="node process">Start AI Interview<br>(Webcam/Mic On)</div>
+
+                <div class="node process">Q&A Loop<br>(Video Recording)</div>
+
+                <div class="node success">Submit Interview<br>Auto-Upload to Cloud</div>
+            </div>
+
+            <!-- LANE 3: AI & DATA CORE -->
+            <div class="lane">
+                <div class="lane-header lane-ai">3. AI & System Core</div>
+                
+                <div class="spacer" style="height: 260px;"></div> <!-- Align with Submit -->
+
+                <div class="node process">Trigger: Video Received<br>(DB Trigger fires)</div>
+
+                <div class="node process">Background Worker<br>Picks up Job</div>
+
+                <div class="node process">Ollama LLM Analysis<br>(Scoring & Sentiment)</div>
+
+                <div class="node decision" style="margin-top: 20px;">
+                    <span>Score Check<br>Threshold 80%</span>
+                </div>
+            </div>
+
+            <!-- LANE 4: RESOLUTION & HIRING -->
+            <div class="lane">
+                <div class="lane-header lane-outcome">4. Resolution (Hire/Reject)</div>
+
+                <!-- Branch: AUTO REJECT (Left side of outcome) -->
+                <div class="spacer" style="height: 540px;"></div>
+                
+                <div class="node fail">Score < 80%<br>Auto-Reject</div>
+                
+                <div class="node process">Retention Policy<br>(Delete Data in 30d)</div>
+
+                <!-- Branch: HIGH SCORE / TICKET -->
+                <div class="node success">Score > 80%<br>Auto-Ticket Created</div>
+
+                <div class="node">HR Reviews Report<br>& Verdict</div>
+
+                <div class="node decision">
+                    <span>Final Decision<br>Human Override?</span>
+                </div>
+
+                <!-- Outcome 1: HIRED -->
+                <div class="node start">Book Real Interview<br>Calendar Invite Sent</div>
+                
+                <!-- Outcome 2: MANUAL REJECT -->
+                <div class="node fail">Force Rejection<br>Archive Candidate</div>
+                
+                <div class="node process">Send Feedback<br>Close Ticket</div>
+            </div>
+
+        </div>
+
+        <!-- Connectors (Visual hacks for complex cross-lane arrows) -->
+        <!-- Just illustrative text overlays for the logic jumps -->
+        <div style="margin-top: 20px; display: flex; justify-content: space-between; font-size: 0.8rem; color: #64748b;">
+            <div><strong>Setup Lane:</strong> Configuration & Preparation</div>
+            <div><strong>Candidate Lane:</strong> The User Experience</div>
+            <div><strong>AI Lane:</strong> Automated Scoring Engine</div>
+            <div><strong>Resolution Lane:</strong> Hiring Decisions & Compliance</div>
+        </div>
+
+    </div>
+
+</body>
+</html>
